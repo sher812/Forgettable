@@ -48,7 +48,7 @@ export const deletePerson = async (
   
     try {
       // Delete user from database
-      // await personService.deletePerson(req.params.personID);
+      await personService.deletePerson(req.params.personID);
       await encounterService.updateEncounters(req.params.personID);
       // Notify frontend that the operation was successful
       res.sendStatus(200);
