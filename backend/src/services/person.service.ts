@@ -19,10 +19,16 @@ const deletePerson = async (personID: string) => {
   await Person.deleteOne({_id: personID});
 }
 
+export const updatePersons = async (encounterID: string) => {
+  await Person.updateMany({ }, { $pullAll: {encounters: [{ _id: encounterID}]} });
+  
+}
+
 const personService = {
   createPerson,
   getPeople,
-  deletePerson
+  deletePerson,
+  updatePersons
 };
 
 export default personService;

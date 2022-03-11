@@ -15,10 +15,15 @@ export const updateEncounters = async (personID: string) => {
     await Encounter.deleteMany({persons: {$exists: true, $size: 0}});
 }
 
+export const deleteEncounters = async (encounterID: string) => {
+    await Encounter.deleteOne({_id: encounterID});
+}
+
 const encounterService = {
     createEncounter,
     getEncounters,
-    updateEncounters
+    updateEncounters,
+    deleteEncounters
   }
 
 export default encounterService;

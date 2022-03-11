@@ -3,7 +3,7 @@
  */
  import { NextFunction, Request, Response } from 'express';
 
- import EncounterModel from '../models/encounter.model';
+ import personService from '../services/person.service';
  import encounterService from '../services/encounter.service';
  import logger from '../utils/logger';
  
@@ -39,6 +39,25 @@
       const encounters = await encounterService.getEncounters();
       res.send(encounters);
     } catch (e) {
+      next(e);
+    }
+  };
+
+export const deleteEncounters = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  ): Promise<void> => {
+    logger.info("DELETE /encounters/:encounterID request from frontend");
+  
+    try {
+      // Delete user from database
+      await encounterService.deleteEncounters(req.params.encounterID);
+      await personService.updatePersons(req.params.encounterID);
+      // Notify frontend that the operation was successful
+      res.sendStatus(200);
+    } catch(e) {
+
       next(e);
     }
   };
