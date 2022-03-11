@@ -27,6 +27,21 @@
      next(e);
    }
  };
+
+ export const getAllEncounters = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    logger.info('GET /persons request from frontend');
+  
+    try {
+      const encounters = await encounterService.getEncounters();
+      res.send(encounters);
+    } catch (e) {
+      next(e);
+    }
+  };
  
  // Util function that won't be needed regularly
 const getEncounterFromReqBody = (body: any) => {
