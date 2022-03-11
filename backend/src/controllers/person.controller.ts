@@ -4,6 +4,7 @@
 import { Request, Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import personService from '../services/person.service';
+import encounterService from '../services/encounter.service';
 import logger from '../utils/logger';
 
 import { POST } from './controller.types';
@@ -37,3 +38,22 @@ export const getAllPeople = async (
     next(e);
   }
 };
+
+export const deletePerson = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  ): Promise<void> => {
+    logger.info("DELETE /persons/:personID request from frontend");
+  
+    try {
+      // Delete user from database
+      // await personService.deletePerson(req.params.personID);
+      await encounterService.updateEncounters(req.params.personID);
+      // Notify frontend that the operation was successful
+      res.sendStatus(200);
+    } catch(e) {
+
+      next(e);
+    }
+  };
