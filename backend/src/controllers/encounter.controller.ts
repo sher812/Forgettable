@@ -5,7 +5,7 @@
 
  import personService from '../services/person.service';
  import encounterService from '../services/encounter.service';
- import userService from 'src/services/user.service';
+ import userService from '../services/user.service';
  import logger from '../utils/logger';
 
  import FirebaseAdmin from '../firebase-configs/firebase-config';
@@ -73,9 +73,10 @@ export const deleteEncounters = async (
           });
   
         // Perform DB logic using retrieved auth_id below
-        // const user = await userService.getUser(auth_id);
+        const user_current = await userService.getUserByAuthId(auth_id);
         const id = req.params.encounterID;
-        // const encounters = user.encounters;
+        // const encounters = user_current.encounters;
+        console.log("USER: ", user_current);
 
         // if (encounters.includes(id)) {
         //   try {
@@ -91,8 +92,7 @@ export const deleteEncounters = async (
         // } else {
         //   res.sendStatus(httpStatus.NOT_FOUND);
         // }
-        console.log(auth_id);
-        
+        res.status(httpStatus.OK).end();
       }
     } catch (e) {
       res.status(httpStatus.INTERNAL_SERVER_ERROR).end();

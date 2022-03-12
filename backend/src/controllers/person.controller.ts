@@ -56,8 +56,6 @@ export const deletePerson = async (
       } else {
         const idToken = req.headers.authorization;
         let auth_id;
-        console.log("ID TOKEN", idToken);
-  
         await FirebaseAdmin.auth()
           .verifyIdToken(idToken)
           .then((decodedToken) => {
@@ -70,25 +68,29 @@ export const deletePerson = async (
           });
   
         // Check person id exists in User's persons array
-        // const user = await userService.getUser(auth_id);
+        const user_current = await userService.getUserByAuthId(auth_id);
         const id = req.params.personID;
-        // const persons = user.persons;
+        const persons_delete = user_current?.persons;
 
-        // if (persons.includes(id)) {
-        //   try {
-        //     // Delete user from database
-        //     await personService.deletePerson(req.params.personID);
-        //     await encounterService.updateEncounters(req.params.personID);
-        //     // Notify frontend that the operation was successful
-        //     res.sendStatus(200);
-        //   } catch(e) {
+        console.log(persons_delete?.includes(Object(id)));
+
+        // if (persons_delete?.includes(Object(id))) {
+        //   // try {
+        //   //   // Delete user from database
+        //   //   await personService.deletePerson(req.params.personID);
+        //   //   await encounterService.updateEncounters(req.params.personID);
+        //   //   // Notify frontend that the operation was successful
+        //   //   res.sendStatus(httpStatus.OK).end();
+        //   // } catch(e) {
       
-        //     next(e);
-        //   }
+        //   //   next(e);
+        //   // }
+        //   console.log("TRUE");
         // } else {
-        //   res.status(httpStatus.NOT_FOUND);
+        //   res.status(httpStatus.NOT_FOUND).end();
         // }
-        console.log(auth_id);
+
+        res.status(httpStatus.OK).end();
       }
     } catch (e) {
       res.status(httpStatus.INTERNAL_SERVER_ERROR).end();

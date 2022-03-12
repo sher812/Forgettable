@@ -6,8 +6,14 @@ export const createUser = async (userDetails: UserModel) => {
     return user;
 };
 
+export const getUserByAuthId = async (userId) => {
+  const user = await User.findOne({ auth_id: userId });
+  return user;
+};
+
 const userService = {
-    createUser
+    createUser,
+    getUserByAuthId
   }
 
 export default userService;
