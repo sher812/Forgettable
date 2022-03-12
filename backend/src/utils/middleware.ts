@@ -13,6 +13,7 @@ const errorHandler = (
     return res.status(httpStatus.BAD_REQUEST).json({ error: error.message });
   }
   next(error);
+  return;
 };
 
 export default {

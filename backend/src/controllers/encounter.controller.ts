@@ -5,7 +5,11 @@
 
  import personService from '../services/person.service';
  import encounterService from '../services/encounter.service';
+ import userService from 'src/services/user.service';
  import logger from '../utils/logger';
+
+ import FirebaseAdmin from '../firebase-configs/firebase-config';
+ import httpStatus from 'http-status';
  
  export const createEncounter = async (
    req: Request,
@@ -49,16 +53,49 @@ export const deleteEncounters = async (
   next: NextFunction,
   ): Promise<void> => {
     logger.info("DELETE /encounters/:encounterID request from frontend");
-  
     try {
-      // Delete user from database
-      await encounterService.deleteEncounters(req.params.encounterID);
-      await personService.updatePersons(req.params.encounterID);
-      // Notify frontend that the operation was successful
-      res.sendStatus(200);
-    } catch(e) {
+      if (!req.headers.authorization) {
+        logger.info("No authorization header");
+        res.status(httpStatus.UNAUTHORIZED).end();
+      } else {
+        const idToken = req.headers.authorization;
+        let auth_id;
+  
+        await FirebaseAdmin.auth()
+          .verifyIdToken(idToken)
+          .then((decodedToken) => {
+            auth_id = decodedToken.uid;
+            logger.info(`Verified User: #${auth_id}`);
+          })
+          .catch((error) => {
+            logger.info("caught unauthorized");
+            res.status(httpStatus.UNAUTHORIZED).end();
+          });
+  
+        // Perform DB logic using retrieved auth_id below
+        // const user = await userService.getUser(auth_id);
+        const id = req.params.encounterID;
+        // const encounters = user.encounters;
 
-      next(e);
+        // if (encounters.includes(id)) {
+        //   try {
+        //     // Delete user from database
+        //     await encounterService.deleteEncounters(req.params.encounterID);
+        //     await personService.updatePersons(req.params.encounterID);
+        //     // Notify frontend that the operation was successful
+        //     res.sendStatus(200);
+        //   } catch(e) {
+      
+        //     next(e);
+        //   }
+        // } else {
+        //   res.sendStatus(httpStatus.NOT_FOUND);
+        // }
+        console.log(auth_id);
+        
+      }
+    } catch (e) {
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).end();
     }
   };
  
