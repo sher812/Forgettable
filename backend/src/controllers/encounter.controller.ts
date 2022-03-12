@@ -75,23 +75,23 @@ export const deleteEncounters = async (
         // Perform DB logic using retrieved auth_id below
         const user_current = await userService.getUserByAuthId(auth_id);
         const id = req.params.encounterID;
-        // const encounters = user_current.encounters;
-        console.log("USER: ", user_current);
+        const encounters_delete = user_current?.encounters;
+        let string_encounters = encounters_delete?.map(x => x.toString());
 
-        // if (encounters.includes(id)) {
-        //   try {
-        //     // Delete user from database
-        //     await encounterService.deleteEncounters(req.params.encounterID);
-        //     await personService.updatePersons(req.params.encounterID);
-        //     // Notify frontend that the operation was successful
-        //     res.sendStatus(200);
-        //   } catch(e) {
+        if (string_encounters?.includes(id.toString())) {
+          try {
+            // Delete user from database
+            await encounterService.deleteEncounters(req.params.encounterID);
+            await personService.updatePersons(req.params.encounterID);
+            // Notify frontend that the operation was successful
+            res.sendStatus(httpStatus.OK).end();
+          } catch(e) {
       
-        //     next(e);
-        //   }
-        // } else {
-        //   res.sendStatus(httpStatus.NOT_FOUND);
-        // }
+            next(e);
+          }
+        } else {
+          res.sendStatus(httpStatus.NOT_FOUND).end();
+        }
         res.status(httpStatus.OK).end();
       }
     } catch (e) {

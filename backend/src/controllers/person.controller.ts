@@ -11,6 +11,7 @@ import logger from '../utils/logger';
 
 import FirebaseAdmin from '../firebase-configs/firebase-config';
 import { POST } from './controller.types';
+import { stringify } from 'querystring';
 
 export const createPerson: POST = async (
   req: Request,
@@ -71,24 +72,23 @@ export const deletePerson = async (
         const user_current = await userService.getUserByAuthId(auth_id);
         const id = req.params.personID;
         const persons_delete = user_current?.persons;
+        let string_persons = persons_delete?.map(x => x.toString());
 
-        console.log(persons_delete?.includes(Object(id)));
+        if (string_persons?.includes(id.toString())) {
+          try {
+            // Delete user from database
+            await personService.deletePerson(req.params.personID);
+            await encounterService.updateEncounters(req.params.personID);
 
-        // if (persons_delete?.includes(Object(id))) {
-        //   // try {
-        //   //   // Delete user from database
-        //   //   await personService.deletePerson(req.params.personID);
-        //   //   await encounterService.updateEncounters(req.params.personID);
-        //   //   // Notify frontend that the operation was successful
-        //   //   res.sendStatus(httpStatus.OK).end();
-        //   // } catch(e) {
+            // Notify frontend that the operation was successful
+            res.sendStatus(httpStatus.OK).end();
+          } catch(e) {
       
-        //   //   next(e);
-        //   // }
-        //   console.log("TRUE");
-        // } else {
-        //   res.status(httpStatus.NOT_FOUND).end();
-        // }
+            next(e);
+          }
+        } else {
+          res.status(httpStatus.NOT_FOUND).end();
+        }
 
         res.status(httpStatus.OK).end();
       }
