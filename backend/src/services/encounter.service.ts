@@ -6,8 +6,22 @@ export const createEncounter = async (encounterDetails: EncounterModel) => {
     return encounter;
 };
 
+export const getEncounters = async () => Encounter.find(() => true).clone();
+
+export const updateEncounters = async (personID: string) => {
+    await Encounter.updateMany({ }, { $pullAll: {persons: [{ _id: personID}]} });
+    await Encounter.deleteMany({persons: {$exists: true, $size: 0}});
+}
+
+export const deleteEncounters = async (encounterID: string) => {
+    await Encounter.deleteOne({_id: encounterID});
+}
+
 const encounterService = {
-    createEncounter
+    createEncounter,
+    getEncounters,
+    updateEncounters,
+    deleteEncounters
   }
 
 export default encounterService;
