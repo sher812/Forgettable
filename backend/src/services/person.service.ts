@@ -14,9 +14,15 @@ const createPerson = async (personDetails: PersonModel) => {
  * Refer to section 'Duplicate Query Execution under https://mongoosejs.com/docs/migrating_to_6.html
  */
 const getPeople = async () => Person.find(() => true).clone();
+
+const deletePersons = async (personID: string) => {
+  await Person.deleteOne({_id: personID});
+}
+
 const personService = {
   createPerson,
   getPeople,
+  deletePersons
 };
 
 export default personService;

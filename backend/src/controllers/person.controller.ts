@@ -4,8 +4,10 @@
 import { Request, Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import personService from '../services/person.service';
-import logger from '../utils/logger';
+import encounterService from '../services/encounter.service';
+import userService from '../services/user.service';
 
+import logger from '../utils/logger';
 import { POST } from './controller.types';
 
 export const createPerson: POST = async (
@@ -37,3 +39,35 @@ export const getAllPeople = async (
     next(e);
   }
 };
+
+export const deletePersons = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  ): Promise<void> => {
+    logger.info("DELETE /persons/:personID request from frontend");
+    const auth_id = req.headers.authorization?.["user_id"];
+    
+    const user_current = await userService.getUserByAuthId(auth_id);
+    const id = req.params.personID;
+    const persons_delete = user_current?.persons;
+    let string_persons = persons_delete?.map(x => x.toString());
+
+    if (string_persons?.includes(id.toString())) {
+      try {
+        // Delete user from database
+        await personService.deletePersons(req.params.personID);
+        await encounterService.updateEncounters(req.params.personID);
+
+        // Notify frontend that the operation was successful
+        res.sendStatus(httpStatus.OK).end();
+      } catch(e) {
+  
+        next(e);
+      }
+    } else {
+      res.sendStatus(httpStatus.NOT_FOUND).end();
+    }
+    
+    res.status(httpStatus.OK).end();
+  };
