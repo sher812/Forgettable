@@ -50,6 +50,7 @@ export const deletePersons = async (
     
     const user_current = await userService.getUserByAuthId(auth_id);
     const id = req.params.personID;
+
     const persons_delete = user_current?.persons;
     let string_persons = persons_delete?.map(x => x.toString());
 
@@ -57,8 +58,14 @@ export const deletePersons = async (
       try {
         // Delete user from database
         await personService.deletePersons(req.params.personID);
-        await encounterService.updateEncounters(req.params.personID);
+        const empty_encounters = await encounterService.updateEncounters(req.params.personID);
+        await userService.deleteUserPerson(req.params.personID);
 
+        // Make sure that empty encounters are also deleted from User
+        for (let i = 0; i < empty_encounters.length; i++) {
+          await userService.deleteUserEncounter(empty_encounters[i]?._id.toString());
+        }
+        
         // Notify frontend that the operation was successful
         res.sendStatus(httpStatus.OK).end();
       } catch(e) {
