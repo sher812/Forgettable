@@ -8,7 +8,7 @@ export const createEncounter = async (encounterDetails: EncounterModel) => {
 
 export const getEncounters = async () => Encounter.find(() => true).clone();
 
-export const deleteEmptyEncounters = async (personID: string) => {
+export const deleteEncounterPerson = async (personID: string) => {
     // Service is used for deletePersons endpoint
 
     await Encounter.updateMany({ }, { $pullAll: {persons: [{ _id: personID}]} });
@@ -22,7 +22,7 @@ export const deleteEmptyEncounters = async (personID: string) => {
 const encounterService = {
     createEncounter,
     getEncounters,
-    deleteEmptyEncounters
+    deleteEncounterPerson
   }
 
 export default encounterService;

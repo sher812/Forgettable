@@ -60,7 +60,7 @@ export const deletePersons = async (
         await personService.deletePersons(req.params.id);
 
         // return encounters that may have empty persons fields
-        const empty_encounters = await encounterService.deleteEmptyEncounters(req.params.id);
+        const empty_encounters = await encounterService.deleteEncounterPerson(req.params.id);
         await userService.deleteUserPerson(req.params.id);
 
         // Make sure that empty encounters are also deleted from User
