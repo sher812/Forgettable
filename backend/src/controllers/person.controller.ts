@@ -48,18 +48,20 @@ export const deletePersons = async (
     logger.info("DELETE /persons/:personID request from frontend");
     const auth_id = req.headers.authorization?.["user_id"];
     
-    const user_current = await userService.getUserByAuthId(auth_id);
-    const id = req.params.personID;
+    const current_user = await userService.getUserByAuthId(auth_id);
+    const user_id = req.params.id;
 
-    const persons_delete = user_current?.persons;
-    let string_persons = persons_delete?.map(x => x.toString());
+    const user_persons = current_user?.persons;
+    let string_persons = user_persons?.map(x => x.toString());
 
-    if (string_persons?.includes(id.toString())) {
+    if (string_persons?.includes(user_id.toString())) {
       try {
         // Delete user from database
-        await personService.deletePersons(req.params.personID);
-        const empty_encounters = await encounterService.updateEncounters(req.params.personID);
-        await userService.deleteUserPerson(req.params.personID);
+        await personService.deletePersons(req.params.id);
+
+        // return encounters that may have empty persons fields
+        const empty_encounters = await encounterService.deleteEmptyEncounters(req.params.id);
+        await userService.deleteUserPerson(req.params.id);
 
         // Make sure that empty encounters are also deleted from User
         for (let i = 0; i < empty_encounters.length; i++) {

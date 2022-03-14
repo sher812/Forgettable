@@ -8,6 +8,6 @@ const routes = Router();
 
 routes.post('/', createPerson)
       .get('/', getAllPeople)
-      .delete('/:personID', deletePersons);
+      .delete('/:id', deletePersons);
 
 export default routes;
