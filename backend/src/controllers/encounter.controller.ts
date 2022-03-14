@@ -51,6 +51,9 @@
         // Delete user from database
         await encounterService.deleteEncounters(req.params.encounterID);
         await personService.updatePersons(req.params.encounterID);
+        await userService.deleteUserEncounter(req.params.encounterID);
+        
+
         // Notify frontend that the operation was successful
         res.sendStatus(httpStatus.OK).end();
       } catch(e) {

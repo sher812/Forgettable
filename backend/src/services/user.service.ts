@@ -11,9 +11,15 @@ export const getUserByAuthId = async (userId) => {
   return user;
 };
 
+export const deleteUserEncounter = async (encounterId : string) => {
+
+  await User.updateMany({}, { $pullAll: {encounters: [{ _id: encounterId}]} });
+};
+
 const userService = {
     createUser,
-    getUserByAuthId
+    getUserByAuthId,
+    deleteUserEncounter
   }
 
 export default userService;

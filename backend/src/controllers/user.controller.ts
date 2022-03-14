@@ -5,6 +5,7 @@
 
  import UserModel from '../models/user.model';
  import userService from '../services/user.service';
+ import httpStatus from 'http-status';
  import logger from '../utils/logger';
  
  export const createUser = async (
@@ -27,6 +28,8 @@
      next(e);
    }
  };
+
+ 
  
  // Util function that won't be needed regularly
 const getUserFromReqBody = (body: any) => {
