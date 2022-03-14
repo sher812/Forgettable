@@ -41,19 +41,18 @@
     logger.info("DELETE /encounters/:encounterID request from frontend");
     const auth_id = req.headers.authorization?.["user_id"];
     
-    const user_current = await userService.getUserByAuthId(auth_id);
-    const id = req.params.encounterID;
-    const encounters_delete = user_current?.encounters;
-    let string_encounters = encounters_delete?.map(x => x.toString());
+    const current_user = await userService.getUserByAuthId(auth_id);
+    const id = req.params.id;
+    const user_encounters = current_user?.encounters;
+    let string_encounters = user_encounters?.map(x => x.toString());
 
     if (string_encounters?.includes(id.toString())) {
       try {
         // Delete user from database
-        await encounterService.deleteEncounters(req.params.encounterID);
-        await personService.updatePersons(req.params.encounterID);
-        await userService.deleteUserEncounter(req.params.encounterID);
+        await encounterService.deleteEncounters(req.params.id);
+        await personService.deletePersonEncounters(req.params.id);
+        await userService.deleteUserEncounter(req.params.id);
         
-
         // Notify frontend that the operation was successful
         res.sendStatus(httpStatus.OK).end();
       } catch(e) {

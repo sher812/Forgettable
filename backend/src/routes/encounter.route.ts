@@ -7,7 +7,7 @@
  const routes = Router();
  
  routes.post('/', createEncounter)
-        .delete('/:encounterID', deleteEncounters);
+        .delete('/:id', deleteEncounters);
  
  export default routes;
  

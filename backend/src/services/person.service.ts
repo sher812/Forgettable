@@ -15,7 +15,7 @@
   */
  const getPeople = async () => Person.find(() => true).clone();
  
- export const updatePersons = async (encounterID: string) => {
+ export const deletePersonEncounters = async (encounterID: string) => {
    await Person.updateMany({ }, { $pullAll: {encounters: [{ _id: encounterID}]} });
    
  }
@@ -23,7 +23,7 @@
  const personService = {
    createPerson,
    getPeople,
-   updatePersons
+   deletePersonEncounters
  };
  
  export default personService;

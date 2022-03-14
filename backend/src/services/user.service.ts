@@ -12,7 +12,6 @@ export const getUserByAuthId = async (userId) => {
 };
 
 export const deleteUserEncounter = async (encounterId : string) => {
-
   await User.updateMany({}, { $pullAll: {encounters: [{ _id: encounterId}]} });
 };
 
